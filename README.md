@@ -1,125 +1,280 @@
-# ESG Agent
+# ESG Agent UI 개발자 문서
 
-실증적 AI 개발 프로젝트 I
+이 폴더는 `Node.js`로 바로 실행 가능한 정리 버전입니다.  
+실무자가 기업을 선택하고, 6개 카테고리 점수를 검토한 뒤, 필요한 경우 세부 지표를 모달 창에서 수정하는 UI를 제공합니다.
 
----
+## 1. 빠른 시작
 
-## 📌 프로젝트 개요
+### 요구 사항
 
-### 프로젝트 명
-상장사 ESG 평가 자동화 시스템 (ESG Agent)
+- Node.js 18 이상 권장
+- Windows, macOS, Linux 모두 가능
 
-### 프로젝트 목적
-본 프로젝트는 국내 코스피 상장 기업의 재무 및 지배구조 건전성을 자동으로 평가하는 ESG Agent를 개발하는 것을 목표로 한다.
+### 실행
 
-기존 수작업 기반 ESG 분석은 시간과 비용이 많이 들며, 단순 LLM 기반 접근은 정형 데이터 처리에서 비효율성과 환각 문제를 발생시킨다.
+```bash
+cd C:\Users\Pc\Desktop\ESG_agent_ui\프로젝트
+npm start
+```
 
-이를 해결하기 위해:
-- 정형 데이터 → Rule-based 처리
-- 비정형 데이터 → GraphRAG 기반 처리
+브라우저에서 아래 주소로 접속합니다.
 
-를 결합한 **하이브리드 AI 시스템**을 구축한다. :contentReference[oaicite:0]{index=0}
+```text
+http://localhost:3100
+```
 
----
+헬스체크:
 
-## 👥 팀 구성 및 역할
+```text
+http://localhost:3100/healthz
+```
 
-| 이름 | 역할 |
-|------|------|
-| 강민석 | 프로젝트 총괄 및 아키텍처 설계 |
-| 김해진 | 데이터 전처리 및 파이프라인 구축 |
-| 조현오 | 프론트엔드 및 RAG/DB 구축 |
+템플릿 API:
 
----
+```text
+http://localhost:3100/api/template
+```
 
-## 🛠️ 기술 스택
+## 2. 프로젝트 구조
 
-### Language
-- Python 3.10+
+```text
+프로젝트/
+├─ data/
+│  └─ template.xlsx
+├─ public/
+│  ├─ app.js
+│  ├─ index.html
+│  └─ styles.css
+├─ src/
+│  └─ template-loader.js
+├─ .gitignore
+├─ package.json
+├─ README.md
+└─ server.js
+```
 
-### Backend
-- FastAPI
+### 파일 역할
 
-### Frontend
-- React
+- `server.js`
+  - HTTP 서버 엔트리포인트
+  - 정적 파일 서빙
+  - `/api/template` 응답
+  - `/healthz` 헬스체크 제공
+- `data/template.xlsx`
+  - 엑셀 템플릿 원본
+  - 서버가 이 파일을 읽어 카테고리/섹션/지표 구조를 만듦
+- `src/template-loader.js`
+  - `.xlsx` 내부 XML을 읽어 템플릿 구조로 변환
+- `public/index.html`
+  - HTML 마크업과 대부분의 스타일 정의
+- `public/app.js`
+  - 클라이언트 상태 관리 및 UI 렌더링
+  - 기업 선택, 연도 전환, 순위 기준 전환, 카테고리 모달 편집 처리
+- `public/styles.css`
+  - 보조 스타일 파일
 
-### Database
-- MySQL / PostgreSQL
-- Neo4j / ChromaDB
+## 3. 현재 UI 동작
 
-### AI / LLM
-- LangChain
-- LangGraph
-- Ollama / Gemini API
+### 핵심 흐름
 
-### Tools
-- Pandas
-- PDF Converter
-- Plotter
+1. 왼쪽에서 `기업 순위`를 확인합니다.
+2. 가운데에서 현재 선택 기업의 6개 카테고리 점수를 봅니다.
+3. 카테고리를 누르면 아래로 펼쳐지는 대신 `세부 지표 편집 모달`이 뜹니다.
+4. 모달 안에서 세부 지표를 확인하고 수정합니다.
 
----
+### 현재 구현된 주요 기능
 
-## ⚙️ 시스템 구조
+- 기업 순위
+  - `통합 순위 / 건전성 / 공정성 / 사회공헌 / 소비자 보호 / 환경경영 / 직원만족` 기준 전환 가능
+  - 현재 보고 있는 카테고리를 바꿔도 왼쪽 순위 기준은 자동 변경되지 않음
+- 검색
+  - 검색어를 입력해도 왼쪽 순위 목록은 유지
+  - 검색은 순위 재산정이 아니라 `기업 빠른 선택` 용도로 동작
+- 연도 전환
+  - 현재 연도 / 전년도 / 재작년 데이터 전환
+  - 선택 연도 기준으로 점수와 세부 지표 갱신
+- 세부 지표 편집
+  - 카테고리 클릭 시 대형 모달 창에서 편집
+  - 일부 지표는 다른 카테고리 값을 참조
 
-### 1. 정형 데이터 처리
-- xlsx 기반 데이터 → DB 저장
-- Rule-based 연산 처리
-- 정확성 및 속도 확보
+## 4. 데이터 구조
 
-### 2. 비정형 데이터 처리
-- PDF 문서 분석
-- GraphRAG 기반 정보 추출
+### 템플릿 구조
 
-### 3. Central Planner
-- 사용자 요청을 Sub-task로 분해
-- 에이전트 간 작업 분배
-- 재실행 루프 구조
+`template-loader.js`는 엑셀 색상과 헤더를 읽어 아래 구조를 만듭니다.
 
-### 4. 결과 생성
-- 분석 결과 시각화
-- ESG 평가 리포트 자동 생성
+- 공통 필드
+- 카테고리
+- 섹션
+- 입력 지표
+- 계산 지표
+- 섹션 점수 필드
+- 카테고리 총점 필드
 
----
+### 프론트 상태
 
-## 🧪 테스트 및 검증
+`public/app.js`의 주요 상태는 다음과 같습니다.
 
-- 실제 DART 데이터 기반 검증
-- 환각 여부 체크
-- 데이터 일관성 검증
-- 리포트 품질 평가
+- `selectedCompanyId`
+  - 현재 선택 기업
+- `selectedYear`
+  - 현재 선택 연도
+- `rankingCategoryKey`
+  - 왼쪽 기업 순위 기준
+- `activeCategoryKey`
+  - 현재 점검 중인 카테고리
+- `editorModalCategoryKey`
+  - 현재 편집 모달에서 열려 있는 카테고리
 
----
+### 연도 데이터
 
-## 📅 개발 일정
+각 기업은 연도별 데이터를 별도로 가집니다.
 
-| 단계 | 기간 |
-|------|------|
-| 정형 데이터 처리 | 3월 |
-| 비정형 데이터 처리 | 4월 |
-| Planner 구축 | 5월 |
-| 리포트 생성 | 6월 |
+- `company.yearValues[연도]`
+- `company.values`
+  - 현재 선택 연도에 매핑된 실제 작업 값
 
----
+## 5. 서버 동작
 
-## 🎯 기대 효과
+### 정적 파일 서빙
 
-- LLM 의존도 감소 → 비용 절감
-- 정확한 데이터 기반 분석
-- ESG 평가 자동화
-- 실무 활용 가능 시스템 구축
+- `/` 요청 시 `public/index.html` 반환
+- 그 외 `/app.js`, `/styles.css` 등 정적 파일 서빙
+- 존재하지 않는 경로는 `index.html`로 fallback
 
----
+### API
 
-## 🚀 활용 방안
+#### `GET /healthz`
 
-- 경실련 ESG 평가 자동화 시스템
-- 기업 분석 도구
-- 금융 / 법률 / 의료 등 확장 가능
+응답 예시:
 
----
+```json
+{
+  "ok": true
+}
+```
 
-## 📚 참고문헌
+#### `GET /api/template`
 
-- LightRAG
-- TART Framework
-- ESG Agent 관련 논문
+응답 예시:
+
+```json
+{
+  "sourceWorkbook": "template.xlsx",
+  "generatedAt": "...",
+  "categories": []
+}
+```
+
+## 6. 점수 계산 관련 주의
+
+현재 점수 계산은 실제 엑셀 평가식을 완전히 재현한 것이 아닙니다.
+
+- 엑셀의 구조와 색상 단계는 반영
+- UI 프로토타입용 더미/시뮬레이션 값 포함
+- 실제 운영용으로 쓰려면 항목별 산식 정의 또는 수식 포함 원본 엑셀 기준으로 교체 필요
+
+즉, 현재 프로젝트는 `실무 UI 검토용 프로토타입`에 더 가깝습니다.
+
+## 7. 자주 수정할 지점
+
+### 포트 변경
+
+```bash
+PORT=3100 npm start
+```
+
+Windows PowerShell:
+
+```powershell
+$env:PORT=3100
+npm start
+```
+
+### 엑셀 파일 경로 변경
+
+`server.js`
+
+```js
+const TEMPLATE_PATH = path.join(__dirname, "data", "template.xlsx");
+```
+
+### 기본 연도 개수 변경
+
+`public/app.js`
+
+```js
+const YEAR_OPTIONS = Array.from({ length: 3 }, (_, index) => new Date().getFullYear() - index);
+```
+
+예를 들어 5개년으로 늘리려면 `length: 5`로 바꾸면 됩니다.
+
+### 왼쪽 순위 기준 기본값 변경
+
+`public/app.js`
+
+```js
+rankingCategoryKey: "integrated"
+```
+
+### 모달 크기 변경
+
+`public/index.html`
+
+```css
+.editor-modal-panel {
+  width: min(1240px, 100%);
+}
+```
+
+## 8. 디버깅 체크리스트
+
+### 서버는 뜨는데 화면이 비어 있음
+
+- `http://localhost:3100/api/template` 응답 확인
+- `data/template.xlsx` 존재 여부 확인
+- 브라우저 콘솔 에러 확인
+
+### 엑셀 API가 500 에러
+
+- `data/template.xlsx` 경로 확인
+- 엑셀 파일 손상 여부 확인
+- `src/template-loader.js` 파싱 실패 로그 확인
+
+### 순위가 이상함
+
+- 현재 `rankingCategoryKey` 기준인지 확인
+- 검색은 순위 필터가 아니라 기업 선택용이라는 점 확인
+
+### 연도 전환이 안 먹음
+
+- `selectedYear` 값이 바뀌는지 확인
+- `syncAllCompaniesForSelectedYear()` 호출 여부 확인
+- `company.yearValues` 구조 확인
+
+
+## 9. 실행 검증 예시
+
+```bash
+cd C:\Users\Pc\Desktop\ESG_agent_ui\프로젝트
+npm start
+```
+
+브라우저:
+
+```text
+http://localhost:3100
+```
+
+API 확인:
+
+```text
+http://localhost:3100/api/template
+http://localhost:3100/healthz
+```
+
+## Port Note
+
+- This clean project uses `http://localhost:3100` by default.
+- If `http://localhost:3000` shows an older blank app, that is a different server.
+- Run `npm start` inside `C:\Users\Pc\Desktop\ESG_agent_ui\프로젝트`.
