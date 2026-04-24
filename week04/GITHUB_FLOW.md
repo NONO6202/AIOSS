@@ -23,6 +23,12 @@ docs: add week04 collaboration workflow assignment
 6. PR 본문에서 변경 목적, 변경 파일, 검토 포인트를 명확히 작성한다.
 7. `[MUST]`, `[SHOULD]` 태그를 사용해 구조화된 리뷰 피드백을 남긴다.
 
+## Pull Request
+
+- PR: [#11 docs: add week04 collaboration workflow assignment](https://github.com/NONO6202/AIOSS/pull/11)
+- Base: `main`
+- Head: `feature/week04-collaboration-workflow`
+
 ## PR 체크리스트
 
 - [x] 작업 브랜치가 `feature/` prefix를 사용한다.
