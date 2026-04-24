@@ -10,19 +10,36 @@ test("repository has required OSS governance files", () => {
 
 test("CI workflow contains matrix, secrets, dependencies, and artifacts", () => {
   const workflow = readFileSync(".github/workflows/ci.yml", "utf8");
+  const reusable = readFileSync(".github/workflows/reusable-node-check.yml", "utf8");
+  const combinedWorkflow = `${workflow}\n${reusable}`;
 
   assert.match(workflow, /strategy:/);
   assert.match(workflow, /matrix:/);
   assert.match(workflow, /node-version:/);
   assert.match(workflow, /os:/);
-  assert.match(workflow, /secrets\.GITHUB_TOKEN/);
+  assert.match(workflow, /windows-latest/);
+  assert.match(workflow, /"24"/);
+  assert.match(combinedWorkflow, /secrets\.GITHUB_TOKEN/);
   assert.match(workflow, /needs: build/);
-  assert.match(workflow, /needs: test/);
-  assert.match(workflow, /upload-artifact/);
-  assert.match(workflow, /download-artifact/);
+  assert.match(workflow, /-\s+test/);
+  assert.match(combinedWorkflow, /upload-artifact/);
+  assert.match(combinedWorkflow, /download-artifact/);
+  assert.match(workflow, /reusable-node-check\.yml/);
+  assert.match(workflow, /detect-changes/);
+});
+
+test("week08 optimization files are present", () => {
+  const reusable = readFileSync(".github/workflows/reusable-node-check.yml", "utf8");
+  const composite = readFileSync(".github/actions/setup-node-project/action.yml", "utf8");
+  const report = readFileSync("week08/CACHE_REPORT.md", "utf8");
+
+  assert.match(reusable, /workflow_call:/);
+  assert.match(composite, /using: composite/);
+  assert.match(report, /24886395644/);
 });
 
 test("root README links week07 submission", () => {
   const readme = readFileSync("README.md", "utf8");
   assert.match(readme, /\[Week 07\]\(week07\/README\.md\)/);
+  assert.match(readme, /\[Week 08\]\(week08\/README\.md\)/);
 });

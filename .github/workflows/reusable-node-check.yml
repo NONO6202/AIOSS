@@ -1,0 +1,96 @@
+name: Reusable Node Check
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: Runner OS.
+        required: true
+        type: string
+      node-version:
+        description: Node.js version.
+        required: true
+        type: string
+      mode:
+        description: Either build or test.
+        required: true
+        type: string
+      artifact-name:
+        description: Build artifact name.
+        required: false
+        type: string
+        default: ci-build-output
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  DORA_WINDOW_DAYS: "30"
+
+jobs:
+  node-check:
+    name: ${{ inputs.mode }} (${{ inputs.os }}, Node ${{ inputs.node-version }})
+    runs-on: ${{ inputs.os }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      GITHUB_REF_NAME: ${{ github.ref_name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup project
+        uses: ./.github/actions/setup-node-project
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Verify secret injection without printing values
+        if: inputs.mode == 'build'
+        shell: bash
+        run: |
+          node -e "if (!process.env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN is missing'); console.log('GITHUB_TOKEN is available and masked by GitHub Actions.');"
+
+      - name: Download build artifact
+        if: inputs.mode == 'test'
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ci-artifacts
+
+      - name: Verify artifact handoff
+        if: inputs.mode == 'test'
+        shell: bash
+        run: |
+          node -e "const fs=require('node:fs'); for (const file of ['ci-artifacts/artifacts/ci-summary.json','ci-artifacts/metrics/dora.json']) { if (!fs.existsSync(file)) throw new Error(`${file} missing`); }"
+
+      - name: Lint
+        shell: bash
+        run: npm run lint
+
+      - name: Test
+        if: inputs.mode == 'test'
+        shell: bash
+        run: npm test
+
+      - name: Build reports
+        if: inputs.mode == 'build'
+        shell: bash
+        run: npm run build
+
+      - name: Upload build artifact
+        if: inputs.mode == 'build'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: |
+            metrics/dora.json
+            week02/assets/dora-dashboard.svg
+            week02/dora-report.md
+            week02/dashboard.html
+            artifacts/ci-summary.json
+            artifacts/ci-summary.md
