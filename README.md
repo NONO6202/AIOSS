@@ -22,6 +22,16 @@ upstream  https://github.com/ESGAgent/ESG_Agent.git (fetch)
 upstream  https://github.com/ESGAgent/ESG_Agent.git (push)
 ```
 
+## OSS 기본 구조
+
+이 저장소는 AIOSS 과제 제출을 위한 public OSS 형식 저장소이며, 다음 기본 문서를 포함합니다.
+
+- [LICENSE](LICENSE): MIT License
+- [CONTRIBUTING.md](CONTRIBUTING.md): 기여 범위, 브랜치 전략, 커밋 규칙, PR 리뷰 규칙
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md): 협업 행동 규범
+
+라이선스는 이 과제 저장소의 공개 산출물에 적용되며, 별도 비공개 프로젝트의 ESG 산식, 내부 계산 규칙, 원본 데이터, 정답 데이터에는 적용하지 않습니다.
+
 ## 과제 목록
 
 - [Week 01](week01/README.md)
