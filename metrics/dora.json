@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-04-24T05:55:51.190Z",
+  "repository": "NONO6202/AIOSS",
+  "branch": "main",
+  "window": {
+    "days": 30,
+    "since": "2026-03-25T05:55:51.190Z",
+    "until": "2026-04-24T05:55:51.190Z"
+  },
+  "dataSource": "local-git-fallback",
+  "summary": {
+    "leadTimeHoursMedian": null,
+    "leadTimeHoursAverage": null,
+    "deploymentFrequencyPerWeek": 0,
+    "deploymentCount": 0,
+    "mttrHoursAverage": null,
+    "changeFailureRatePercent": null
+  },
+  "counts": {
+    "localCommits": 7,
+    "mergedPullRequests": 0,
+    "workflowRuns": 0,
+    "successfulWorkflowRuns": 0,
+    "failedWorkflowRuns": 0,
+    "recoveredFailures": 0
+  },
+  "chart": {
+    "labels": [
+      "Lead Time",
+      "Deploy Frequency",
+      "MTTR",
+      "Change Failure Rate"
+    ],
+    "values": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "units": [
+      "hours",
+      "deploys/week",
+      "hours",
+      "%"
+    ]
+  },
+  "definitions": {
+    "leadTime": "merged PR 기준 첫 commit 시각부터 merge 시각까지의 중앙값. PR commit 조회 실패 시 PR 생성 시각을 사용한다.",
+    "deploymentFrequency": "지정 기간 동안 기본 브랜치에서 성공한 workflow run 수를 주 단위로 환산한 값.",
+    "mttr": "실패한 workflow run 이후 같은 workflow와 branch에서 다음 성공 run까지 걸린 평균 시간.",
+    "changeFailureRate": "완료된 workflow run 중 failure, cancelled, timed_out, action_required 결론의 비율."
+  },
+  "notes": [
+    "이 저장소는 운영 배포 시스템이 없으므로 GitHub 활동 데이터 기반의 DORA 프록시 지표를 수집한다.",
+    "Deployment Frequency는 production deployment가 없을 때 기본 브랜치의 성공한 workflow run 수로 대체한다.",
+    "MTTR은 실패한 workflow run 이후 같은 workflow/branch에서 다음 성공 run까지의 시간으로 계산한다.",
+    "Change Failure Rate는 완료된 workflow run 중 실패/취소/타임아웃 비율로 계산한다.",
+    "로컬 실행에는 GitHub token이 없어 local git commit 정보만 fallback으로 사용했다.",
+    "GitHub Actions 실행 시에는 GITHUB_TOKEN으로 PR과 workflow run 데이터를 수집한다."
+  ]
+}

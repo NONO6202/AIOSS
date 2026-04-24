@@ -1,0 +1,55 @@
+name: DORA Metrics
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1"
+  pull_request:
+  deployment_status:
+  push:
+    paths:
+      - ".github/workflows/metrics.yml"
+      - "scripts/collect_dora_metrics.mjs"
+      - "scripts/render_dora_dashboard.mjs"
+      - "week02/**"
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: read
+
+jobs:
+  collect:
+    name: Collect DORA metrics
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Collect metrics
+        run: node scripts/collect_dora_metrics.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          DORA_WINDOW_DAYS: "30"
+
+      - name: Render dashboard and report
+        run: node scripts/render_dora_dashboard.mjs
+
+      - name: Upload DORA metrics artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dora-metrics
+          path: |
+            metrics/dora.json
+            week02/assets/dora-dashboard.svg
+            week02/dora-report.md
+            week02/dashboard.html

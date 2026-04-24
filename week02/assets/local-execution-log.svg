@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360">
+  <style>
+    .bg { fill: #0f172a; }
+    .title { font: 700 20px Arial, sans-serif; fill: #e5e7eb; }
+    .line { font: 15px Menlo, Consolas, monospace; fill: #d1d5db; }
+    .ok { fill: #22c55e; }
+    .muted { fill: #94a3b8; }
+  </style>
+  <rect class="bg" width="1120" height="360" rx="12"/>
+  <text x="28" y="42" class="title">Local DORA Metrics Execution Log</text>
+  <text x="28" y="84" class="line">$ node scripts/collect_dora_metrics.mjs</text>
+  <text x="28" y="116" class="line ok">✓ metrics/dora.json generated</text>
+  <text x="28" y="154" class="line">$ node scripts/render_dora_dashboard.mjs</text>
+  <text x="28" y="186" class="line ok">✓ week02/assets/dora-dashboard.svg generated</text>
+  <text x="28" y="218" class="line ok">✓ week02/dora-report.md generated</text>
+  <text x="28" y="256" class="line">$ node --check scripts/collect_dora_metrics.mjs &amp;&amp; node --check scripts/render_dora_dashboard.mjs</text>
+  <text x="28" y="288" class="line ok">✓ syntax check passed</text>
+  <text x="28" y="326" class="line muted">Note: GitHub Actions run screenshot should be captured after push from the Actions tab.</text>
+</svg>

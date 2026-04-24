@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+  <style>
+    .title { font: 700 30px Arial, sans-serif; fill: #111827; }
+    .subtitle { font: 15px Arial, sans-serif; fill: #4b5563; }
+    .card-label { font: 700 15px Arial, sans-serif; fill: #374151; }
+    .card-value { font: 700 30px Arial, sans-serif; fill: #111827; }
+    .card-detail { font: 14px Arial, sans-serif; fill: #6b7280; }
+    .section { font: 700 18px Arial, sans-serif; fill: #111827; }
+    .axis { font: 14px Arial, sans-serif; fill: #374151; }
+    .bar-value { font: 700 14px Arial, sans-serif; fill: #111827; }
+    .note { font: 13px Arial, sans-serif; fill: #4b5563; }
+  </style>
+  <rect width="1200" height="620" fill="#f8fafc"/>
+  <text x="36" y="48" class="title">DORA Metrics Dashboard</text>
+  <text x="36" y="74" class="subtitle">NONO6202/AIOSS · main · 30 days · generated 2026-04-24T05:55:51.190Z</text>
+  
+      <rect x="36" y="92" width="260" height="126" rx="10" fill="#ffffff" stroke="#d1d5db"/>
+      <rect x="36" y="92" width="260" height="8" rx="4" fill="#2563eb"/>
+      <text x="56" y="130" class="card-label">Lead Time</text>
+      <text x="56" y="172" class="card-value">N/Ah</text>
+      <text x="56" y="200" class="card-detail">median commit-to-merge</text>
+
+      <rect x="322" y="92" width="260" height="126" rx="10" fill="#ffffff" stroke="#d1d5db"/>
+      <rect x="322" y="92" width="260" height="8" rx="4" fill="#16a34a"/>
+      <text x="342" y="130" class="card-label">Deployment Frequency</text>
+      <text x="342" y="172" class="card-value">0.0 / week</text>
+      <text x="342" y="200" class="card-detail">0 successful runs</text>
+
+      <rect x="608" y="92" width="260" height="126" rx="10" fill="#ffffff" stroke="#d1d5db"/>
+      <rect x="608" y="92" width="260" height="8" rx="4" fill="#f59e0b"/>
+      <text x="628" y="130" class="card-label">MTTR</text>
+      <text x="628" y="172" class="card-value">N/Ah</text>
+      <text x="628" y="200" class="card-detail">0 recovered failures</text>
+
+      <rect x="894" y="92" width="260" height="126" rx="10" fill="#ffffff" stroke="#d1d5db"/>
+      <rect x="894" y="92" width="260" height="8" rx="4" fill="#dc2626"/>
+      <text x="914" y="130" class="card-label">Change Failure Rate</text>
+      <text x="914" y="172" class="card-value">N/A%</text>
+      <text x="914" y="200" class="card-detail">0/0 failed runs</text>
+  <text x="36" y="256" class="section">Normalized metric preview</text>
+  
+      <text x="50" y="292" class="axis">Lead Time</text>
+      <rect x="210" y="270" width="360" height="24" rx="5" fill="#e5e7eb"/>
+      <rect x="210" y="270" width="2" height="24" rx="5" fill="#2563eb"/>
+      <text x="590" y="292" class="bar-value">0.0 hours</text>
+
+      <text x="50" y="346" class="axis">Deploy Frequency</text>
+      <rect x="210" y="324" width="360" height="24" rx="5" fill="#e5e7eb"/>
+      <rect x="210" y="324" width="2" height="24" rx="5" fill="#16a34a"/>
+      <text x="590" y="346" class="bar-value">0.0 deploys/week</text>
+
+      <text x="50" y="400" class="axis">MTTR</text>
+      <rect x="210" y="378" width="360" height="24" rx="5" fill="#e5e7eb"/>
+      <rect x="210" y="378" width="2" height="24" rx="5" fill="#f59e0b"/>
+      <text x="590" y="400" class="bar-value">0.0 hours</text>
+
+      <text x="50" y="454" class="axis">Change Failure Rate</text>
+      <rect x="210" y="432" width="360" height="24" rx="5" fill="#e5e7eb"/>
+      <rect x="210" y="432" width="2" height="24" rx="5" fill="#dc2626"/>
+      <text x="590" y="454" class="bar-value">0.0 %</text>
+  <text x="36" y="546" class="note">Note: Production deployment data is not available yet, so workflow runs are used as repository-level proxy signals.</text>
+  <text x="36" y="570" class="note">Data source: local-git-fallback. Raw JSON artifact: metrics/dora.json.</text>
+</svg>

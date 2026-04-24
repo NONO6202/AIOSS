@@ -7,6 +7,7 @@ AI Open Source Software 과제 저장소입니다.
 ## 과제 목록
 
 - [Week 01](week01/README.md)
+- [Week 02](week02/README.md)
 
 ## 생성형 AI 활용
 

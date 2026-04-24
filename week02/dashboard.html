@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DORA Metrics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f8fafc;
+        color: #111827;
+      }
+
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 32px 20px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+
+      .meta {
+        margin: 0 0 24px;
+        color: #4b5563;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 16px;
+      }
+
+      .label {
+        color: #4b5563;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .value {
+        margin-top: 12px;
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .panel {
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>DORA Metrics Dashboard</h1>
+      <p class="meta" id="meta">Loading metrics...</p>
+      <section class="grid" id="cards"></section>
+      <section class="panel">
+        <canvas id="chart" height="120"></canvas>
+      </section>
+    </main>
+    <script>
+      const fallback = {
+        repository: "NONO6202/AIOSS",
+        branch: "main",
+        generatedAt: "local preview",
+        summary: {
+          leadTimeHoursMedian: 0,
+          deploymentFrequencyPerWeek: 0,
+          mttrHoursAverage: 0,
+          changeFailureRatePercent: 0,
+        },
+        chart: {
+          labels: ["Lead Time", "Deploy Frequency", "MTTR", "Change Failure Rate"],
+          values: [0, 0, 0, 0],
+          units: ["hours", "deploys/week", "hours", "%"],
+        },
+      };
+
+      async function loadMetrics() {
+        try {
+          const response = await fetch("../metrics/dora.json");
+          if (!response.ok) throw new Error("metrics unavailable");
+          return await response.json();
+        } catch {
+          return fallback;
+        }
+      }
+
+      function fmt(value, unit) {
+        return Number.isFinite(value) ? `${value.toFixed(1)} ${unit}` : "N/A";
+      }
+
+      loadMetrics().then((metrics) => {
+        document.getElementById("meta").textContent =
+          `${metrics.repository} · ${metrics.branch} · generated ${metrics.generatedAt}`;
+
+        const labels = metrics.chart.labels;
+        const units = metrics.chart.units;
+        const values = metrics.chart.values;
+        document.getElementById("cards").innerHTML = labels
+          .map((label, index) => {
+            return `<article class="card"><div class="label">${label}</div><div class="value">${fmt(values[index], units[index])}</div></article>`;
+          })
+          .join("");
+
+        new Chart(document.getElementById("chart"), {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "DORA metric value",
+                data: values,
+                backgroundColor: ["#2563eb", "#16a34a", "#f59e0b", "#dc2626"],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } },
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
