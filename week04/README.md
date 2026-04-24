@@ -16,7 +16,7 @@ Feature 브랜치 전략으로 작업하고 Conventional Commits를 적용해 Pu
 | Feature 브랜치 전략 | 완료 | `feature/week04-collaboration-workflow` 브랜치에서 작업 |
 | Conventional Commits | 완료 | `docs: add week04 collaboration workflow assignment` |
 | Pull Request 생성 | 완료 | [PR #11](https://github.com/NONO6202/AIOSS/pull/11) |
-| PR 리뷰 3건 이상 | 완료 예정 | [PR #11](https://github.com/NONO6202/AIOSS/pull/11)에 `[MUST]`, `[SHOULD]` 태그 리뷰 제출 |
+| PR 리뷰 3건 이상 | 완료 | [PR #11](https://github.com/NONO6202/AIOSS/pull/11)에 `[MUST]`, `[SHOULD]` 태그 리뷰 3건 제출 |
 
 ## 제외한 항목
 
