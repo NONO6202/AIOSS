@@ -1,0 +1,15 @@
+{
+  "name": "aioss-assignment",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AIOSS assignment repository CI project.",
+  "scripts": {
+    "lint": "node scripts/lint.mjs",
+    "test": "node --test",
+    "build": "node scripts/collect_dora_metrics.mjs && node scripts/render_dora_dashboard.mjs && node scripts/create_ci_summary.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

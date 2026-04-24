@@ -1,0 +1,131 @@
+name: CI Pipeline
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    paths:
+      - ".github/workflows/ci.yml"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/**"
+      - "tests/**"
+      - "week07/**"
+      - "README.md"
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      GITHUB_REF_NAME: ${{ github.ref_name }}
+      DORA_WINDOW_DAYS: "30"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify secret injection without printing values
+        run: |
+          node -e "if (!process.env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN is missing'); console.log('GITHUB_TOKEN is available and masked by GitHub Actions.');"
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build reports
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-build-output
+          path: |
+            metrics/dora.json
+            week02/assets/dora-dashboard.svg
+            week02/dora-report.md
+            week02/dashboard.html
+            artifacts/ci-summary.json
+            artifacts/ci-summary.md
+
+  test:
+    name: Test (${{ matrix.os }}, Node ${{ matrix.node-version }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        node-version:
+          - "20"
+          - "22"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-build-output
+          path: ci-artifacts
+
+      - name: Verify artifact handoff
+        run: node -e "const fs=require('node:fs'); for (const file of ['ci-artifacts/artifacts/ci-summary.json','ci-artifacts/metrics/dora.json']) { if (!fs.existsSync(file)) throw new Error(`${file} missing`); }"
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+  deploy:
+    name: Deploy artifact preview
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-build-output
+          path: ci-artifacts
+
+      - name: Prepare deploy preview
+        run: |
+          mkdir -p deploy-preview
+          cp ci-artifacts/week02/dashboard.html deploy-preview/index.html
+          cp ci-artifacts/week02/assets/dora-dashboard.svg deploy-preview/dora-dashboard.svg
+          cp ci-artifacts/artifacts/ci-summary.md deploy-preview/ci-summary.md
+
+      - name: Upload deploy preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-preview
+          path: deploy-preview

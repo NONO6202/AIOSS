@@ -39,6 +39,8 @@ upstream  https://github.com/ESGAgent/ESG_Agent.git (push)
 - [Week 03](week03/README.md)
 - [Week 04](week04/README.md)
 - [Week 05](week05/README.md)
+- [Week 06](week06/README.md)
+- [Week 07](week07/README.md)
 
 ## 생성형 AI 활용
 
