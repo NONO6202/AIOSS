@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: ci-build-output
+      cache-enabled:
+        description: Enable npm dependency cache in the composite setup action.
+        required: false
+        type: string
+        default: "true"
 
 permissions:
   actions: read
@@ -48,6 +53,7 @@ jobs:
         uses: ./.github/actions/setup-node-project
         with:
           node-version: ${{ inputs.node-version }}
+          cache-enabled: ${{ inputs.cache-enabled }}
 
       - name: Verify secret injection without printing values
         if: inputs.mode == 'build'

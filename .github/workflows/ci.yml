@@ -2,6 +2,15 @@ name: CI Pipeline
 
 on:
   workflow_dispatch:
+    inputs:
+      dependency-cache:
+        description: Enable npm dependency cache for cache comparison runs.
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
   pull_request:
   push:
     paths:
@@ -56,6 +65,7 @@ jobs:
       node-version: "20"
       mode: build
       artifact-name: ci-build-output
+      cache-enabled: ${{ github.event_name != 'workflow_dispatch' || inputs.dependency-cache }}
     secrets: inherit
 
   test:
@@ -78,6 +88,7 @@ jobs:
       node-version: ${{ matrix.node-version }}
       mode: test
       artifact-name: ci-build-output
+      cache-enabled: ${{ github.event_name != 'workflow_dispatch' || inputs.dependency-cache }}
     secrets: inherit
 
   deploy:

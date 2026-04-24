@@ -26,6 +26,8 @@ test("CI workflow contains matrix, secrets, dependencies, and artifacts", () => 
   assert.match(combinedWorkflow, /download-artifact/);
   assert.match(workflow, /reusable-node-check\.yml/);
   assert.match(workflow, /detect-changes/);
+  assert.match(workflow, /dependency-cache/);
+  assert.match(workflow, /cache-enabled:/);
 });
 
 test("week08 optimization files are present", () => {
@@ -36,6 +38,8 @@ test("week08 optimization files are present", () => {
 
   assert.match(reusable, /workflow_call:/);
   assert.match(composite, /using: composite/);
+  assert.match(composite, /Setup Node\.js with npm cache/);
+  assert.match(composite, /Setup Node\.js without dependency cache/);
   assert.match(report, /24886395644/);
   assert.match(detectChanges, /!\s*docsOnly\s*&&\s*files\.some\(isDeployRelevant\)/);
 });
