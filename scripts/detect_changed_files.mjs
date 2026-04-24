@@ -45,8 +45,8 @@ function isMarkdownOnly(files) {
 }
 
 const files = changedFiles();
-const deployRequired = eventName === "workflow_dispatch" || files.some(isDeployRelevant);
 const docsOnly = isMarkdownOnly(files);
+const deployRequired = eventName === "workflow_dispatch" || (!docsOnly && files.some(isDeployRelevant));
 
 const outputs = {
   "changed-files": files.join(","),

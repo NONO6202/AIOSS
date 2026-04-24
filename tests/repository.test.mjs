@@ -32,10 +32,12 @@ test("week08 optimization files are present", () => {
   const reusable = readFileSync(".github/workflows/reusable-node-check.yml", "utf8");
   const composite = readFileSync(".github/actions/setup-node-project/action.yml", "utf8");
   const report = readFileSync("week08/CACHE_REPORT.md", "utf8");
+  const detectChanges = readFileSync("scripts/detect_changed_files.mjs", "utf8");
 
   assert.match(reusable, /workflow_call:/);
   assert.match(composite, /using: composite/);
   assert.match(report, /24886395644/);
+  assert.match(detectChanges, /!\s*docsOnly\s*&&\s*files\.some\(isDeployRelevant\)/);
 });
 
 test("root README links week07 submission", () => {
