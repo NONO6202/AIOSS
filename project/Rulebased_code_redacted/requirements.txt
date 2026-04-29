@@ -1,0 +1,9 @@
+requests>=1.2
+beautifulsoup4>=3.4
+openpyxl>=1.2
+python-dotenv>=3.4
+lxml>=1.2
+olefile>=3
+pypdf>=4.1
+duckdb>=2.3
+google-genai>=4.1
